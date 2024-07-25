@@ -3,7 +3,7 @@ import React from 'react'
 
 const LoadingPage = () => {
   return (
-    <div className='w-dvw h-dvh flex items-center justify-center'>
+    <div className='z-10 w-dvw h-dvh flex items-center justify-center'>
         <Loader2 className='size-20 animate-spin' />
     </div>
   )

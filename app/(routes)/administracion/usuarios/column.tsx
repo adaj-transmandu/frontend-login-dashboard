@@ -7,18 +7,10 @@ import { DataTableColumnHeader } from "@/components/tables/DataTableHeader"
 import DropdownActions from "@/components/misc/DropdownActions"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
-
-export type Item = {
-  id: number,
-  first_name: string
-  last_name: string
-  username: string
-  email: string
-  isActive: boolean
-}
+import { User } from "@/types/user"
 
 
-export const columns: ColumnDef<Item>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -75,6 +67,27 @@ export const columns: ColumnDef<Item>[] = [
         <>
           {
             item.isActive.toString() === '1' ? <Badge className="bg-emerald-500">ACTIVO</Badge> : <Badge className="bg-rose-500">INACTIVO</Badge>
+          }
+        </>
+      )
+    }
+  },
+  {
+    accessorKey: "roles",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Roles" />
+    ),
+    cell: ({row}) => {
+      const item = row.original
+
+      return (
+        <>
+          {
+            item.roles?.map((rol) => (
+              <div className="flex gap-2" key={rol.id}>
+                <Badge>{rol.name}</Badge>
+              </div>
+            ))
           }
         </>
       )
