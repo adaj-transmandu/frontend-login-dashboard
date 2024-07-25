@@ -1,12 +1,11 @@
 import axiosInstance from '@/lib/axios'
 import { createCookie } from '@/lib/cookie'
 import { createSession } from '@/lib/session'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { cookies } from 'next/headers'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-export const useAuth = ({
+export const useAuth2 = ({
   middleware,
   redirectIfAuthenticated,
 }: {
@@ -40,6 +39,6 @@ export const useAuth = ({
 
 
   return {
-    login: loginMutation,
+    login2: loginMutation,
   }
 }

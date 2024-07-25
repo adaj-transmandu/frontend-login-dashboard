@@ -2,7 +2,7 @@ import { ContentLayout } from '@/components/layout/ContentLayout'
 import ProtectedRoute from '@/components/layout/ProtectedRoute'
 import React from 'react'
 
-const PermisosPage = () => {
+const AdminPage = () => {
   return (
     <ProtectedRoute roles={['admin']}>
       <ContentLayout title='Permisos'>PermisosPage</ContentLayout>
@@ -10,4 +10,4 @@ const PermisosPage = () => {
   )
 }
 
-export default PermisosPage
+export default AdminPage

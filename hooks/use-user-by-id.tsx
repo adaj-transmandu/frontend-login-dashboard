@@ -22,5 +22,6 @@ export const useGetUserById = (id: string) => {
     queryKey: ['user', id], // Incluye el ID en la clave de la query
     queryFn: () => fetchUser(id), // Pasa el ID a la función fetchUser
     staleTime: 1000 * 60 * 5, // 5 minutos
+    onSucces: console.log('hey')
   });
 };

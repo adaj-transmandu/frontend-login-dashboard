@@ -1,17 +1,16 @@
 "use client"
-import { genSaltSync, hashSync } from "bcrypt-ts";
-import { useAuth } from "@/actions/auth/actions"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import Image from "next/image"
-import { useForm } from "react-hook-form"
-import loadingGif from '@/public/loading2.gif'
-import { Separator } from "../ui/separator"
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
+import {useAuth2} from '@/actions/auth/actions'
+import loadingGif from '@/public/loading2.gif';
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Separator } from "../ui/separator";
 
-// Define the schema using zod
 const FormSchema = z.object({
   login: z.string().min(3, {
     message: "El usuario debe tener al menos 3 caracteres.",
@@ -25,7 +24,8 @@ type FormSchemaType = z.infer<typeof FormSchema>
 
 export function LoginForm() {
 
-  const {login} = useAuth({})
+  const {loginMutation} = useAuth();
+  const {login2} = useAuth2({})
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
@@ -36,7 +36,7 @@ export function LoginForm() {
   })
 
   const onSubmit = (data: FormSchemaType) => {
-    login.mutate(data)
+    loginMutation.mutate(data);
   }
 
   return (
@@ -73,8 +73,8 @@ export function LoginForm() {
           <p className="text-muted-foreground">SIGEAC</p>
           <Separator className="flex-1" />
         </div>
-        <Button variant={login.isPending ? 'outline' : "default"} className="bg-primary text-white hover:bg-blue-900 disabled:bg-slate-50 disabled:border-4" disabled={login?.isPending} type="submit">
-          {login?.isPending ? <Image className="text-black" src={loadingGif} width={170} height={170} alt="Loading..." /> : <p>Iniciar Sesion</p>}
+        <Button variant={loginMutation.isPending ? 'outline' : "default"} className="bg-primary text-white hover:bg-blue-900 disabled:bg-slate-50 disabled:border-4" disabled={loginMutation?.isPending} type="submit">
+          {loginMutation?.isPending ? <Image className="text-black" src={loadingGif} width={170} height={170} alt="Loading..." /> : <p>Iniciar Sesion</p>}
         </Button>
       </form>
     </Form>
