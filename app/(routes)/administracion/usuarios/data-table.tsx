@@ -28,10 +28,17 @@ import {
 } from "@/components/ui/table"
 import { ListRestart } from "lucide-react"
 import { useState } from "react"
+import { useGetRoles } from "@/hooks/use-roles"
+import { Role } from "@/types/roles"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+}
+
+interface TableProps {
+  label: string;
+  value: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -44,32 +51,20 @@ export function DataTable<TData, TValue>({
     []
   )
 
-  const companies = [
-    {
-      label: 'Transmandu',
-      value: 'tmd'
-    },
-    {
-      label: 'Hangar74',
-      value: 'hng74'
-    },
-    {
-      label: 'AVSEC',
-      value: 'avsec'
+  function formatData(roles: Role[] | undefined): TableProps[] {
+    if(!roles) {
+      return []
     }
-  ]
+    return roles.map(item => ({
+      label: item.name,
+      value: item.id.toString(),
+    }));
+  }
 
-  const status = [
-    {
-      label: "ACTIVO",
-      value: 'active',
-    },
-    {
-      label: "NO ACTIVO",
-      value: "nonactive",
-    }
-  ]
+  const {data: roles, isLoading} = useGetRoles();
 
+  const formattedRoles = formatData(roles);
+  
   const table = useReactTable({
     data,
     columns,
@@ -99,11 +94,11 @@ export function DataTable<TData, TValue>({
             }
             className="max-w-sm"
           />
-          {table.getColumn("isActive") && (
+          {table.getColumn("roles") && (
           <DataTableFacetedFilter
-            column={table.getColumn("isActive")}
-            title="Status"
-            options={status}
+            column={table.getColumn("roles")}
+            title="Rol"
+            options={formattedRoles ?? []}
           />
         )}
           {isFiltered && (

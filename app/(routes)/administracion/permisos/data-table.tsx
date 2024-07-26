@@ -29,6 +29,7 @@ import {
 import { ListRestart } from "lucide-react"
 import { useState } from "react"
 import { CreateRoleDialog } from "@/components/dialogs/CreateRoleDialog"
+import { CreatePermissionDialog } from "@/components/dialogs/CreatePermissionDialog"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -84,7 +85,7 @@ export function DataTable<TData, TValue>({
             <ListRestart className="ml-2 h-4 w-4" />
           </Button>
         )}
-        <CreateRoleDialog />
+        <CreatePermissionDialog />
         </div>
         <DataTableViewOptions table={table} />
       </div>

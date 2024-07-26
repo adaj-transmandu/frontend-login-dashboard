@@ -1,12 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from '@/lib/axios';
+import { User } from '@/types/user';
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  // Otros campos que pueda tener tu usuario
-}
 
 const fetchUser = async (): Promise<User> => {
   const { data } = await axios.get('/user');
