@@ -1,17 +1,21 @@
+'use client';
+
 import { ContentLayout } from '@/components/layout/ContentLayout';
 import DashboardNotifications from '@/components/misc/DashboradNotifications';
-
-export type User = {
-  name: string,
-  id: number,
-  password: string,
-  email: string,
-}
+import { useAuth } from '@/contexts/AuthContext';
 
 const DashboardPage =  () => {
+
+    const {user, loading} = useAuth();
+
     return (
     <ContentLayout title='Dashboard'>
-      <h1 className='font-bold'>Ultimas Novedades:</h1>
+      {
+        loading && <div>Cargando...</div>
+      }
+      {
+        user && <h1 className='text-2xl font-medium'>Bienvenido: {user.first_name}</h1>
+      }
       <DashboardNotifications />
     </ContentLayout>
   )

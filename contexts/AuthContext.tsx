@@ -2,7 +2,7 @@
 
 import { default as axios, default as axiosInstance } from '@/lib/axios';
 import { createCookie } from '@/lib/cookie';
-import { createSession } from '@/lib/session';
+import { createSession, deleteSession } from '@/lib/session';
 import { User } from '@/types/user';
 import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     userQuery.refetch();
-    console.log('refetch')
+    router.refresh();
   }, []);
 
   const loginMutation = useMutation({
@@ -77,10 +77,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  const logout = () => {
-    setUser(null);
-    axios.post('/logout');
-    queryClient.setQueryData(['user'], null);
+  const logout = async () => {
+    try {
+      localStorage.clear();
+      deleteSession();
+      setUser(null);
+      queryClient.clear();
+      router.push('/');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (

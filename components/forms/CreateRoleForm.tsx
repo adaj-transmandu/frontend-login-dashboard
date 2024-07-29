@@ -1,47 +1,71 @@
 'use client';
 import { useCreateRole } from "@/actions/roles/actions";
 import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Tabs,
-  TabsContent,
   TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input";
+  TabsTrigger
+} from "@/components/ui/tabs";
+import { useGetCompanies } from "@/hooks/useGetCompanies";
+import { useGetModulesByCompanyId } from "@/hooks/useGetModulesByCompanyId";
+import { Company } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
+import { Loader, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import loadingGif from '@/public/loading2.gif'
 import { Button } from "../ui/button";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction } from "react";
-import { Checkbox } from "../ui/checkbox";
+import { useGetPermissions } from "@/hooks/useGetPermissions";
 
 const formSchema = z.object({
   name: z.string().min(3, {
     message: "El nombre debe tener al menos 3 carácters.",
   }),
+  company: z.string(),
+  module: z.string(),
 })
 
 export default function CreateRoleForm() {
+
+  const [selectedCompany, setSelectedCompany] = useState<Company>();
 	
 	const {createRole} = useCreateRole();
 
+  const {data: companies, isLoading} = useGetCompanies();
+
+  const {data: permissions, isLoading: isPermissionLoading} = useGetPermissions();
+
+  const { mutate: fetchModules, data: modules, isPending } = useGetModulesByCompanyId();
+
+  useEffect(() => {
+    if (selectedCompany) {
+      fetchModules(selectedCompany.id);
+      console.log(modules)
+    }
+  }, [selectedCompany, fetchModules]);
 
 	const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      company: "",
+      module: "",
     },
   })
 
@@ -51,6 +75,10 @@ export default function CreateRoleForm() {
 		createRole.mutate(values);
   }
 
+  const onValueChange = (value: string) => {
+    const company = companies?.find(company => company.id.toString() === value);
+    setSelectedCompany(company)
+  }
 
   return (
     <Form {...form}>
@@ -72,78 +100,63 @@ export default function CreateRoleForm() {
           )}
       />
       <FormField
+        control={control}
+        name="company"
+        render={({ field }) => (
+        <FormItem>
+          <FormLabel>Compañía</FormLabel>
+          <Select onValueChange={(event) => {
+            field.onChange(event)
+            onValueChange(event)
+          }}
+          >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccione la compañia..." />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {
+                  isLoading && <div>Cargando...</div> 
+                }
+                {
+                  companies && companies.map(company => (
+                    <SelectItem key={company.id} value={company.id.toString()}>
+                      {company.description}
+                    </SelectItem>
+                    ))
+                }
+              </SelectContent>
+            </Select>
+          <FormDescription>
+          Especifíque la compañía a la que pertenecerá el permiso.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+          )}
+        />
+      <FormField
           control={control}
           name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Permisos</FormLabel>
               <FormControl>
-              <Tabs defaultValue="almacen" >
+              <Tabs >
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="almacen">Almacen</TabsTrigger>
-                  <TabsTrigger value="planificacion">Planificacion</TabsTrigger>
+                  {
+                    isPending && <Loader className="size-4 animate-spin"/>
+                  }
+                  {
+                    modules?.map((module) => (
+                      <TabsTrigger value={module.name} key={module.id}>{module.name}</TabsTrigger>
+                    ))
+                  }
                 </TabsList>
-                <TabsContent value="almacen">
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" />
-                      <label
-                        htmlFor="terms"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        PERMISO
-                      </label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" />
-                      <label
-                        htmlFor="terms"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        PERMISO
-                      </label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" />
-                      <label
-                        htmlFor="terms"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        PERMISO
-                      </label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" />
-                      <label
-                        htmlFor="terms"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        PERMISO
-                      </label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" />
-                      <label
-                        htmlFor="terms"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        PERMISO
-                      </label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" />
-                      <label
-                        htmlFor="terms"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        PERMISO
-                      </label>
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="planificacion">
-                  planificacion
-                </TabsContent>
+                {
+                  
+                  
+                }
               </Tabs>
               </FormControl>
               <FormDescription>

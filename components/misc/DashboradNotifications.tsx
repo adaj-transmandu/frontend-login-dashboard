@@ -1,14 +1,9 @@
-'use client';
-
 import { notifications } from "@/lib/notification-list";
 import { toast } from "sonner";
 import NotificationItem from "@/components/misc/NotificationItem";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
 
 const DashboardNotifications = () => {
-
-  const {user, loading} = useAuth();
 
   const handleToast = () => {
     toast("¡Aviso!", {
@@ -28,7 +23,6 @@ const DashboardNotifications = () => {
         ))
       }
       <Button className="w-[250px] text-white bg-black hover:bg-slate-700" onClick={handleToast}>Mostrar Notificacion</Button>
-      <p>Bienvenido {user?.username}</p>
     </div>
   )
 }

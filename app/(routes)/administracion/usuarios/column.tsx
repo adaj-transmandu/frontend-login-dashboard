@@ -3,11 +3,18 @@
 import { ColumnDef } from "@tanstack/react-table"
  
 import { DataTableColumnHeader } from "@/components/tables/DataTableHeader"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 import DropdownActions from "@/components/misc/DropdownActions"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { User } from "@/types/user"
+import Image from "next/image"
 
 
 export const columns: ColumnDef<User>[] = [
@@ -40,7 +47,14 @@ export const columns: ColumnDef<User>[] = [
     ),
     cell: ({row}) =>
       <>
-          <span className='number'>{row.original.first_name} {row.original.last_name}</span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger><span className='number'>{row.original.first_name} {row.original.last_name}</span></TooltipTrigger>
+            <TooltipContent>
+              <Image src={'/kanye.png'} width={100} height={100} alt="Imagen referencial"/>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </>
   },
   {

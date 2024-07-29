@@ -22,66 +22,39 @@ import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Company, Module } from "@/types";
+import { useGetModules } from "@/hooks/useGetModules";
+import { useGetCompanies } from "@/hooks/useGetCompanies";
+import { useGetModulesByCompanyId } from "@/hooks/useGetModulesByCompanyId";
+import { useCreatePermission } from "@/actions/permisos/actions";
+
 
 const formSchema = z.object({
   name: z.string().min(3, {
     message: "El nombre debe tener al menos 3 carácters.",
   }),
-  description: z.string().min(3, {
-    message: "La descripción debe contener al menos 3 carácteres."
-  }),
-  module: z.string().min(3,{
-    message:  "La descripción debe contener al menos 3 carácteres.",
-  }),
-  company: z.string().min(3,{
-    message: "Debe escoger una empresa."
-  })
+  module: z.string(),
+  company: z.string(),
 })
 
-interface Company {
-  id: number;
-  name: string;
-}
 
-interface Module {
-  id: number;
-  name: string;
-  companyId: number;
-}
+export default function CreatePermisssionForm({setOpen}: {
+  setOpen: Dispatch<SetStateAction<boolean>>
+}) {
 
-const companies: Company[] = [
-  { id: 1, name: 'Company A' },
-  { id: 2, name: 'Company B' },
-];
+  const [selectedCompany, setSelectedCompany] = useState<Company>();
+  const { data: companies, error: companiesError, isLoading: isCompaniesLoading } = useGetCompanies();
 
-const allModules: Module[] = [
-  { id: 1, name: 'Module 1', companyId: 1 },
-  { id: 2, name: 'Module 2', companyId: 1 },
-  { id: 3, name: 'Module 3', companyId: 2 },
-];
+  const { mutate: fetchModules, data: modules, isPending } = useGetModulesByCompanyId();
 
-export default function CreatePermisssionForm() {
+  const {createPermission} = useCreatePermission();
 
-  const { createRole } = useCreateRole();
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [modules, setModules] = useState<Module[]>([]);
-  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
-
-  useEffect(() => {
-    if (selectedCompany) {
-      const filteredModules = allModules.filter(module => module.companyId === selectedCompany.id);
-      setModules(filteredModules);
-    } else {
-      setModules([]);
-    }
-  }, [selectedCompany]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      description: "",
       company: "",
       module: "",
     },
@@ -89,8 +62,28 @@ export default function CreatePermisssionForm() {
 
   const { control } = form;
 
+  const onValueChange = (value: string) => {
+    const company = companies?.find(company => company.id.toString() === value);
+    setSelectedCompany(company)
+  }
+
+  useEffect(() => {
+    if (selectedCompany) {
+      fetchModules(selectedCompany.id);
+      console.log(modules)
+    }
+  }, [selectedCompany, fetchModules]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    createRole.mutate(values);
+    const formattedValues = {
+      name: values.name,
+      company: parseInt(values.company),
+      module: parseInt(values.module),
+    }
+    createPermission.mutate(formattedValues);
+    if(createPermission.isSuccess){
+      setOpen(false);
+    }
   }
 
 
@@ -113,7 +106,7 @@ export default function CreatePermisssionForm() {
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
         control={control}
         name="description"
         render={({ field }) => (
@@ -128,17 +121,16 @@ export default function CreatePermisssionForm() {
             <FormMessage />
         </FormItem>
           )}
-        />
+        /> */}
         <FormField
         control={control}
         name="company"
         render={({ field }) => (
         <FormItem>
           <FormLabel>Compañía</FormLabel>
-          <Select onValueChange={(value) => {
-            const company = companies.find(company => company.id.toString() === value);
-            setSelectedCompany(company || null);
-            setSelectedModule(null);
+          <Select onValueChange={(event) => {
+            field.onChange(event)
+            onValueChange(event)
           }}
           >
               <FormControl>
@@ -147,12 +139,16 @@ export default function CreatePermisssionForm() {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-              {companies.map(company => (
-                <SelectItem key={company.id} value={company.id.toString()}>
-                  {company.name}
-                </SelectItem>
-                ))
-              }
+                {
+                  isCompaniesLoading && <div>Cargando...</div> 
+                }
+                {
+                  companies && companies.map(company => (
+                    <SelectItem key={company.id} value={company.id.toString()}>
+                      {company.description}
+                    </SelectItem>
+                    ))
+                }
               </SelectContent>
             </Select>
           <FormDescription>
@@ -168,19 +164,18 @@ export default function CreatePermisssionForm() {
         render={({ field }) => (
         <FormItem>
           <FormLabel>Modulo</FormLabel>
-          <Select onValueChange={(value) => {
-              const module = modules.find(module => module.id.toString() === value);
-              setSelectedModule(module || null);
-            }}
-            disabled={!selectedCompany}
+          <Select
+            disabled={!selectedCompany || isPending} 
+            onValueChange={field.onChange}
           >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccione el módulo..." />
+                  {isPending && <Loader2 className="animate-spin" />}
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {modules.map(module => (
+                {modules && modules.map(module => (
                   <SelectItem key={module.id} value={module.id.toString()}>
                     {module.name}
                   </SelectItem>
@@ -194,8 +189,8 @@ export default function CreatePermisssionForm() {
         </FormItem>
           )}
         />
-        <Button className="bg-primary mt-2 text-white hover:bg-blue-900 disabled:bg-primary/70" disabled={createRole?.isPending} type="submit">
-          {createRole?.isPending ? <Loader2 className="size-4 animate-spin" /> : <p>Crear</p>}
+        <Button className="bg-primary mt-2 text-white hover:bg-blue-900 disabled:bg-primary/70" disabled={createPermission?.isPending} type="submit">
+          {createPermission?.isPending ? <Loader2 className="size-4 animate-spin" /> : <p>Crear</p>}
         </Button>
       </form>
     </Form>

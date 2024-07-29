@@ -16,9 +16,6 @@ const CompanySelect = () => {
   const { selectedCompany, selectedStation, setSelectedCompany, setSelectedStation, initFromLocalStorage } = useCompanyStore();
 
   useEffect(() => {
-      // Esta función initFromLocalStorage debería estar definida en useCompanyStore,
-      // asegúrate de haberla definido en el hook Zustand como se mostró antes.
-      // Si no está definida, puedes inicializar los valores directamente aquí.
       initFromLocalStorage();
 
   }, []);
@@ -38,8 +35,8 @@ const CompanySelect = () => {
           <SelectValue placeholder={selectedCompany ? `${selectedCompany.toUpperCase()}` : 'Empresa'}/>
       </SelectTrigger>
       <SelectContent>
-          <SelectItem value="transmandu">Transmandu</SelectItem>
-          <SelectItem value="hangar74">Hangar74</SelectItem>
+          <SelectItem value="transmandu">TRANSMANDU</SelectItem>
+          <SelectItem value="hangar74">HANGAR74</SelectItem>
           <SelectItem value="avsec">AVSEC</SelectItem>
       </SelectContent>
       </Select>

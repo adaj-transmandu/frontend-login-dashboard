@@ -1,6 +1,6 @@
 import axiosInstance from '@/lib/axios'
 import { createCookie } from '@/lib/cookie'
-import { createSession } from '@/lib/session'
+import { createSession, deleteSession } from '@/lib/session'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -37,8 +37,15 @@ export const useAuth2 = ({
     },
   })
 
+  const logout = () => {
+    deleteSession();
+    localStorage.clear();
+    router.push('/')
+  }
+
 
   return {
     login2: loginMutation,
+    logout
   }
 }

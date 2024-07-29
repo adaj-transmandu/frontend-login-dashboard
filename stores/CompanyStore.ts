@@ -5,7 +5,7 @@ interface CompanyState {
     selectedStation: string | null;
     setSelectedCompany: (company: string) => void;
     setSelectedStation: (station: string) => void;
-    initFromLocalStorage: () => void; // Agregar initFromLocalStorage como opcional
+    initFromLocalStorage: () => void; 
 }
 
 export const useCompanyStore = create<CompanyState>((set) => ({

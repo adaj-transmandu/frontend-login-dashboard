@@ -48,8 +48,20 @@ export const columns: ColumnDef<Permission>[] = [
     ),
     cell: ({row}) =>
       <>
-          <span>{row.original.companies.map((company, index) => (
-            <div key={index}>{company.name}</div>
+          <span>{row.original.modules.map((module) => (
+            <div key={module.company.id}>{module.company.description}</div>
+          ))}</span>
+      </>
+  },
+  {
+    accessorKey: "module",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Módulo" />
+    ),
+    cell: ({row}) =>
+      <>
+          <span>{row.original.modules.map((module) => (
+            <div key={module.id}>{module.name}</div>
           ))}</span>
       </>
   },

@@ -11,6 +11,7 @@ const RolesPage = () => {
   const {data: roles, error, isLoading} = useGetRoles();
   return (
     <ContentLayout title='Roles'>
+      <h1 className='text-2xl font-bold'>Listado de Roles</h1>
       {
         isLoading && (
           <div className='grid mt-72 place-content-center'>

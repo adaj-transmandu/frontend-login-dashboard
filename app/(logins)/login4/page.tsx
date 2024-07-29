@@ -1,15 +1,13 @@
-import { LoginForm } from '@/components/LoginForm'
-import Logo from '@/components/misc/Logo'
+import { LoginForm } from '@/components/forms/LoginForm'
 import { ThemeToggler } from '@/components/layout/ThemeToggler'
-import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import Logo from '@/components/misc/Logo'
 
 const Login4 = () => {
 
   return (
     <div className="h-dvh w-dvw bg-primary">
       <div className="flex flex-col lg:flex-row mx-auto h-full items-center justify-between">
-        <div className="bg-planeBg1 bg-cover bg-no-repeat w-full h-full">
+        <div className="bg-planeBg2 bg-cover bg-no-repeat w-full h-full">
         </div>
         <div className="h-full w-full flex lg:items-center justify-center dark:bg-slate-900 lg:bg-primary/60 lg:dark:bg-primary/70">
           <div className="flex flex-col space-y-4 lg:bg-white  lg:dark:bg-accent p-2 lg:p-12 lg:shadow-lg rounded-lg">

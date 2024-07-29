@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 const fetchPermissions = async (): Promise<Permission[]> => {
   const  response  = await axios.get('/permission');
   const permissions = response.data;
-  console.log(permissions)
   return permissions;
 };
 

@@ -22,9 +22,11 @@ import {
 import { useGetUser } from "@/hooks/use-user";
 import { deleteSession } from "@/lib/session";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function UserNav() {
   const {push} = useRouter();
+  const {logout} = useAuth()
   const { data: user, error, isLoading } = useGetUser();
   return (
     <DropdownMenu>
@@ -83,11 +85,7 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="hover:cursor-pointer" onClick={() => {
-          deleteSession();
-          push('/login1')
-            }
-          }>
+        <DropdownMenuItem className="hover:cursor-pointer" onClick={logout}>
           <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
           Cerrar sesión
         </DropdownMenuItem>
