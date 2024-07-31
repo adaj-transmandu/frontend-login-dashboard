@@ -8,9 +8,10 @@ interface ProtectedRouteProps {
   children: ReactNode;
   roles?: string[];
   permissions?: string[];
+  directPermissions?: string[];
 }
 
-const ProtectedRoute = ({ children, roles, permissions }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, roles, permissions, directPermissions }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -25,12 +26,19 @@ const ProtectedRoute = ({ children, roles, permissions }: ProtectedRouteProps) =
   
   const userPermissions = user.roles?.flatMap(role => role.permissions.map(permission => permission.name)) || [];
 
+  const userDirectPermissions = user.direct_permissions?.map(directPermissions => directPermissions.name) || [];
+
   if (roles && !roles.some(role => userRoles.includes(role))) {
     router.push('/not-authorized');
     return null;
   }
 
   if (permissions && !permissions.some(permission => userPermissions.includes(permission))) {
+    router.push('/not-authorized');
+    return null;
+  }
+
+  if (directPermissions && !directPermissions.some(permission => userDirectPermissions.includes(permission))) {
     router.push('/not-authorized');
     return null;
   }

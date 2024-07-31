@@ -18,4 +18,8 @@ export type User = {
       name: string,
     }[]
   }[];
+  direct_permissions: {
+    id: number,
+    name: string
+  }[]
 }

@@ -19,12 +19,13 @@ import {
 } from "@/components/ui/select";
 import {
   Tabs,
+  TabsContent,
   TabsList,
   TabsTrigger
 } from "@/components/ui/tabs";
 import { useGetCompanies } from "@/hooks/useGetCompanies";
 import { useGetModulesByCompanyId } from "@/hooks/useGetModulesByCompanyId";
-import { Company } from "@/types";
+import { Company, Module } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -32,6 +33,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
 import { useGetPermissions } from "@/hooks/useGetPermissions";
+import { Checkbox } from "../ui/checkbox";
+import { permission } from "process";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -39,11 +42,16 @@ const formSchema = z.object({
   }),
   company: z.string(),
   module: z.string(),
+  permissions: z.array(z.number()).refine((value) => value.some((item) => item), {
+    message: "You have to select at least one item.",
+  }),
 })
 
 export default function CreateRoleForm() {
 
   const [selectedCompany, setSelectedCompany] = useState<Company>();
+
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
 	
 	const {createRole} = useCreateRole();
 
@@ -66,6 +74,7 @@ export default function CreateRoleForm() {
       name: "",
       company: "",
       module: "",
+      permissions: [],
     },
   })
 
@@ -79,6 +88,12 @@ export default function CreateRoleForm() {
     const company = companies?.find(company => company.id.toString() === value);
     setSelectedCompany(company)
   }
+
+  const handleModuleChange = (moduleName: string) => {
+    const module = modules?.find(m => m.name === moduleName) || null;
+    setSelectedModule(module);
+  }
+
 
   return (
     <Form {...form}>
@@ -137,27 +152,43 @@ export default function CreateRoleForm() {
         />
       <FormField
           control={control}
-          name="name"
+          name="permissions"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Permisos</FormLabel>
               <FormControl>
-              <Tabs >
-                <TabsList className="grid w-full grid-cols-2">
-                  {
-                    isPending && <Loader className="size-4 animate-spin"/>
-                  }
-                  {
-                    modules?.map((module) => (
-                      <TabsTrigger value={module.name} key={module.id}>{module.name}</TabsTrigger>
-                    ))
-                  }
-                </TabsList>
-                {
-                  
-                  
-                }
-              </Tabs>
+                <Tabs onValueChange={handleModuleChange}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    {isPending && <Loader className="size-4 animate-spin" />}
+                    {modules?.map((m) => (
+                      <TabsTrigger value={m.name} key={m.id}>{m.name}</TabsTrigger>
+                    ))}
+                  </TabsList>
+                  {selectedModule && (
+                    <TabsContent value={selectedModule.name}>
+                      {permissions?.filter(permission => 
+                        permission.modules.some(mod => mod.id === selectedModule.id)
+                      ).map(permission => (
+                        <div key={permission.id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={permission.name}
+                            value={permission.id}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...field.value, permission.id])
+                                : field.onChange(
+                                    field.value?.filter(
+                                      (value) => value !== permission.id
+                                    )
+                                  )
+                            }}
+                          />
+                          <label htmlFor={permission.name}>{permission.name}</label>
+                        </div>
+                      ))}
+                    </TabsContent>
+                  )}
+                </Tabs>
               </FormControl>
               <FormDescription>
                 Estos serán los permisos asignados al rol.
@@ -165,7 +196,7 @@ export default function CreateRoleForm() {
               <FormMessage />
             </FormItem>
           )}
-      />
+        />
       <Button className="bg-primary mt-2 text-white hover:bg-blue-900 disabled:bg-primary/70" disabled={createRole?.isPending} type="submit">
         {createRole?.isPending ? <Loader2 className="size-4 animate-spin" />: <p>Crear</p>}
       </Button>

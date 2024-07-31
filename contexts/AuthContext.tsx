@@ -70,7 +70,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: () => {
       userQuery.refetch();
       setError(null);
-      router
     },
     onError: (err: any) => {
       setError(err.message);
@@ -79,8 +78,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
-      localStorage.clear();
-      deleteSession();
+      await deleteSession();
+      await localStorage.clear();
       setUser(null);
       queryClient.clear();
       router.push('/');
@@ -99,7 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth debe ser utilizado dentro del AuthProvider');
   }
   return context;
 };
