@@ -1,6 +1,13 @@
 export type Role = {
     id: number,
     name: string,
+    companyId: number;
+    permissions: Permission[],
+    company: {
+      id: number,
+      name: string,
+      description: string,
+    }[]
 }
 
 export type User = {
@@ -28,6 +35,7 @@ export type User = {
 export type Permission = {
   id: number,
   name: string,
+  label: string,
   modules: {
     id: number,
     name: string,

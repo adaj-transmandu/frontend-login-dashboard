@@ -20,7 +20,7 @@ export default function Home() {
         borderRadius: '0 99% 99% 0',
       }} className="w-full h-full bg-clouds bg-cover relative animate-moveBackground">
         <motion.div key="plane"
-        initial={{ x: -650, y:650 }}
+        initial={{ x: -650, y:750 }}
         transition={{
           duration: 1.5,
           bounce: 0.40,  
@@ -33,13 +33,13 @@ export default function Home() {
           <Image className="absolute top-56 -right-40 " src={'/plane3.webp'} width={850} height={850} alt="avion" />
         </motion.div>
       </div>
-      <motion.div initial={{opacity: 0}} animate={{opacity:1 }} className="w-full h-full flex flex-col items-center justify-center gap-4">
+      <div className="w-full h-full flex flex-col items-center justify-center gap-4">
         <div  className="flex flex-col justify-center items-center gap-4">
           <Logo />
           <Button onClick={onClick}>Iniciar Sesión</Button>
         </div>
         <Footer />
-      </motion.div>
+      </div>
     </div>
   );
 }

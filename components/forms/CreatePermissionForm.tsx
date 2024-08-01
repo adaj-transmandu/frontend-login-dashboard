@@ -1,5 +1,5 @@
 'use client';
-import { useCreateRole } from "@/actions/roles/actions";
+import { useCreatePermission } from "@/actions/permisos/actions";
 import {
   Form,
   FormControl,
@@ -9,30 +9,31 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/select";
+import { useGetCompanies } from "@/hooks/useGetCompanies";
+import { useGetModulesByCompanyId } from "@/hooks/useGetModulesByCompanyId";
+import { Company } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Company, Module } from "@/types";
-import { useGetModules } from "@/hooks/useGetModules";
-import { useGetCompanies } from "@/hooks/useGetCompanies";
-import { useGetModulesByCompanyId } from "@/hooks/useGetModulesByCompanyId";
-import { useCreatePermission } from "@/actions/permisos/actions";
 
 
 const formSchema = z.object({
   name: z.string().min(3, {
     message: "El nombre debe tener al menos 3 carácters.",
+  }),
+  label: z.string().min(3, {
+    message: "La etiqueta debe tener al menos 3 carácters.",
   }),
   module: z.string(),
   company: z.string(),
@@ -44,6 +45,7 @@ export default function CreatePermisssionForm({setOpen}: {
 }) {
 
   const [selectedCompany, setSelectedCompany] = useState<Company>();
+  
   const { data: companies, error: companiesError, isLoading: isCompaniesLoading } = useGetCompanies();
 
   const { mutate: fetchModules, data: modules, isPending } = useGetModulesByCompanyId();
@@ -55,6 +57,7 @@ export default function CreatePermisssionForm({setOpen}: {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      label: "",
       company: "",
       module: "",
     },
@@ -81,12 +84,8 @@ export default function CreatePermisssionForm({setOpen}: {
       module: parseInt(values.module),
     }
     createPermission.mutate(formattedValues);
-    if(createPermission.isSuccess){
-      setOpen(false);
-    }
   }
-
-
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -97,7 +96,7 @@ export default function CreatePermisssionForm({setOpen}: {
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input placeholder="EJ: Admin" {...field} />
+                <Input placeholder="EJ: inventario.crear" {...field} />
               </FormControl>
               <FormDescription>
                 Este será el nombre de su permiso.
@@ -106,22 +105,22 @@ export default function CreatePermisssionForm({setOpen}: {
             </FormItem>
           )}
         />
-        {/* <FormField
+        <FormField
         control={control}
-        name="description"
+        name="label"
         render={({ field }) => (
         <FormItem>
-            <FormLabel>Descripción</FormLabel>
+            <FormLabel>Etiqueta</FormLabel>
             <FormControl>
             <Input placeholder="EJ: Creación de usuario" {...field} />
             </FormControl>
             <FormDescription>
-            Agregue una <strong>pequeña</strong> descripción del permiso.
+            Agregue una <strong>etiqueta</strong> al permiso.
             </FormDescription>
             <FormMessage />
         </FormItem>
           )}
-        /> */}
+        />
         <FormField
         control={control}
         name="company"
@@ -183,7 +182,7 @@ export default function CreatePermisssionForm({setOpen}: {
               </SelectContent>
             </Select>
           <FormDescription>
-          Especifíque la compañía a la que pertenecerá el permiso.
+          Especifíque el modulo al pertenecerá.
           </FormDescription>
           <FormMessage />
         </FormItem>

@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await createCookie("auth_token", token);
       await createSession(response.data.userId);
       await setUser(response.data)
-      await router.push('/dashboard')
+      router.push('/dashboard')
       toast('Hey', {
         description: 'Inicio correcto...'
       })

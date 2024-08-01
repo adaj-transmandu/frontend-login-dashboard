@@ -32,6 +32,16 @@ export const columns: ColumnDef<Permission>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "label",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nombre" />
+    ),
+    cell: ({row}) =>
+      <>
+          <span className='font-bold'>{row.original.label ?? "N/A"}</span>
+      </>
+  },
+  {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />

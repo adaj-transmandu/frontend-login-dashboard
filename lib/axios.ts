@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.0.251/test-laravel11/public/api',
+  baseURL: 'http://192.168.0.230/auth-laravel11/public/api',
   withCredentials: true,
 });
 

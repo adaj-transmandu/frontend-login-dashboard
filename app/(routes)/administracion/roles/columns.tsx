@@ -3,14 +3,23 @@
 import { ColumnDef } from "@tanstack/react-table"
  
 import { DataTableColumnHeader } from "@/components/tables/DataTableHeader"
-
 import DropdownActions from "@/components/misc/DropdownActions"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Role } from "@/types"
+import { Badge } from "@/components/ui/badge"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import { Button } from "@/components/ui/button"
+import PermissionsDrawer from "@/components/misc/PermissionsDrawer"
 
-export type Role = {
-  id: number,
-  name: string,
-}
 
 
 export const columns: ColumnDef<Role>[] = [
@@ -45,6 +54,22 @@ export const columns: ColumnDef<Role>[] = [
       <>
           <span className='number'>{row.original.name}</span>
       </>
+  },
+  {
+    accessorKey: "permissions",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Permisos" />
+    ),
+    cell: ({row}) =>
+      <PermissionsDrawer permissions={row.original.permissions} />
+  },
+  {
+    accessorKey: "company",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Compañia" />
+    ),
+    cell: ({row}) =>
+      <p>{row.original.company.map((c) => <p>{c.description}</p>)}</p>
   },
   {
     id: "actions",

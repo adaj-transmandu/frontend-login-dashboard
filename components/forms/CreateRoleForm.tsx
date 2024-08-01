@@ -34,14 +34,12 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import { useGetPermissions } from "@/hooks/useGetPermissions";
 import { Checkbox } from "../ui/checkbox";
-import { permission } from "process";
 
 const formSchema = z.object({
   name: z.string().min(3, {
     message: "El nombre debe tener al menos 3 carácters.",
   }),
   company: z.string(),
-  module: z.string(),
   permissions: z.array(z.number()).refine((value) => value.some((item) => item), {
     message: "You have to select at least one item.",
   }),
@@ -73,7 +71,6 @@ export default function CreateRoleForm() {
     defaultValues: {
       name: "",
       company: "",
-      module: "",
       permissions: [],
     },
   })
@@ -81,7 +78,14 @@ export default function CreateRoleForm() {
   const { control } = form;
 
 	const onSubmit = async (values: z.infer<typeof formSchema> ) => {
-		createRole.mutate(values);
+		
+    const data = {
+      name: values.name,
+      company: parseInt(values.company),
+      permissions: values.permissions
+    }
+
+    createRole.mutate(data);
   }
 
   const onValueChange = (value: string) => {
@@ -157,41 +161,51 @@ export default function CreateRoleForm() {
             <FormItem>
               <FormLabel>Permisos</FormLabel>
               <FormControl>
-                <Tabs onValueChange={handleModuleChange}>
-                  <TabsList className="grid w-full grid-cols-2">
-                    {isPending && <Loader className="size-4 animate-spin" />}
-                    {modules?.map((m) => (
-                      <TabsTrigger value={m.name} key={m.id}>{m.name}</TabsTrigger>
-                    ))}
-                  </TabsList>
-                  {selectedModule && (
-                    <TabsContent value={selectedModule.name}>
-                      {permissions?.filter(permission => 
-                        permission.modules.some(mod => mod.id === selectedModule.id)
-                      ).map(permission => (
-                        <div key={permission.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={permission.name}
-                            value={permission.id}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...field.value, permission.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== permission.id
-                                    )
-                                  )
-                            }}
-                          />
-                          <label htmlFor={permission.name}>{permission.name}</label>
-                        </div>
-                      ))}
-                    </TabsContent>
-                  )}
-                </Tabs>
+                {
+                  selectedCompany ? (
+                    <>
+                      <Tabs onValueChange={handleModuleChange}>
+                        <TabsList className="grid w-full grid-cols-2">
+                          {isPending && <Loader className="size-4 animate-spin" />}
+                          {modules?.map((m) => (
+                            <TabsTrigger value={m.name} key={m.id}>{m.name}</TabsTrigger>
+                          ))}
+                        </TabsList>
+                        {selectedModule && (
+                          <TabsContent value={selectedModule.name}>
+                            {permissions?.filter(permission => 
+                              permission.modules.some(mod => mod.id === selectedModule.id)
+                            ).map(permission => (
+                              <div key={permission.id} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={permission.name}
+                                  value={permission.id}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, permission.id])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== permission.id
+                                          )
+                                        )
+                                  }}
+                                />
+                                <label htmlFor={permission.name}>{permission.label}</label>
+                              </div>
+                            ))}
+                          </TabsContent>
+                        )}
+                      </Tabs>
+                    </>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">Esperando eleccion...</p>
+                  )
+                }
               </FormControl>
               <FormDescription>
-                Estos serán los permisos asignados al rol.
+                {
+                  selectedCompany && <p>Estos serán los permisos asignados al rol.</p> 
+                }
               </FormDescription>
               <FormMessage />
             </FormItem>

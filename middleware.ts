@@ -16,6 +16,7 @@ export default async function middleware(req: NextRequest) {
   if (isProtectedRoute) {
     const cookie = cookies().get('session')?.value;
     const session = await decryptJWT(cookie);
+    console.log(cookie)
     console.log('middleware');
     if (!session?.userId) {
       console.log('no');
