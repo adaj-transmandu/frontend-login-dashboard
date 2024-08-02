@@ -41,7 +41,7 @@ const formSchema = z.object({
   }),
   company: z.string(),
   permissions: z.array(z.number()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one item.",
+    message: "Debe seleccionar al menos un permiso.",
   }),
 })
 
@@ -62,7 +62,6 @@ export default function CreateRoleForm() {
   useEffect(() => {
     if (selectedCompany) {
       fetchModules(selectedCompany.id);
-      console.log(modules)
     }
   }, [selectedCompany, fetchModules]);
 

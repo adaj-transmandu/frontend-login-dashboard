@@ -27,6 +27,9 @@ import {
     menus: Menu[];
   };
   
+
+  //TODO: Crear menus para cada empresa. Mismo array o diferente, ir probando.
+
   export function getMenuList(pathname: string): Group[] {
     return [
       {

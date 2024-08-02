@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import { MoreHorizontal, SquarePen, Trash2 } from "lucide-react"
+import { EyeIcon, MoreHorizontal, SquarePen, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "../ui/button"
 
@@ -45,10 +45,10 @@ const DropdownActions = ({ id }: { id: string | number }) => {
           }}>
             <Tooltip>
               <TooltipTrigger>
-                <SquarePen className="size-5" />
+                <EyeIcon className="size-5" />
               </TooltipTrigger>
               <TooltipContent>
-                Editar
+                Ver
               </TooltipContent>
             </Tooltip>
           </DropdownMenuItem>

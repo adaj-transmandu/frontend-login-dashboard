@@ -2,23 +2,13 @@
 
 import { ColumnDef } from "@tanstack/react-table"
  
-import { DataTableColumnHeader } from "@/components/tables/DataTableHeader"
 import DropdownActions from "@/components/misc/DropdownActions"
+import PermissionsDialog from "@/components/misc/PermissionsDialog"
+import { DataTableColumnHeader } from "@/components/tables/DataTableHeader"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Role } from "@/types"
+import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
-import { Button } from "@/components/ui/button"
-import PermissionsDrawer from "@/components/misc/PermissionsDrawer"
 
 
 
@@ -52,7 +42,7 @@ export const columns: ColumnDef<Role>[] = [
     ),
     cell: ({row}) =>
       <>
-          <span className='number'>{row.original.name}</span>
+          <Badge>{row.original.name}</Badge>
       </>
   },
   {
@@ -61,7 +51,9 @@ export const columns: ColumnDef<Role>[] = [
       <DataTableColumnHeader column={column} title="Permisos" />
     ),
     cell: ({row}) =>
-      <PermissionsDrawer permissions={row.original.permissions} />
+      <>
+        <PermissionsDialog roleName={row.original.name} permissions={row.original.permissions} />
+      </>
   },
   {
     accessorKey: "company",
@@ -69,7 +61,7 @@ export const columns: ColumnDef<Role>[] = [
       <DataTableColumnHeader column={column} title="Compañia" />
     ),
     cell: ({row}) =>
-      <p>{row.original.company.map((c) => <p>{c.description}</p>)}</p>
+      <p>{row.original.company.map((c) => <div className="flex gap-2 items-center"><p className="text-muted-foreground">{c.description}</p> <Image src={c.name === 'TMD' ? "/LOGO_TRD.png" : "/logo.png"} width={100} height={100} alt="logo" className="w-[40px] h-[40px]" /></div>)}</p>
   },
   {
     id: "actions",

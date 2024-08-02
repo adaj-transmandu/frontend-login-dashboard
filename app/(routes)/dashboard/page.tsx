@@ -2,11 +2,18 @@
 
 import { ContentLayout } from '@/components/layout/ContentLayout';
 import DashboardNotifications from '@/components/misc/DashboradNotifications';
+import WelcomePage from '@/components/misc/WelcomePage';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCompanyStore } from '@/stores/CompanyStore';
 
 const DashboardPage =  () => {
 
     const {user, loading} = useAuth();
+    const {selectedCompany, selectedStation} = useCompanyStore();
+
+    if(!selectedCompany || !selectedStation){
+      return <WelcomePage />
+    }
 
     return (
     <ContentLayout title='Dashboard'>

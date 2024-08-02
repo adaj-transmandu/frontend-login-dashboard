@@ -73,7 +73,6 @@ export default function CreatePermisssionForm({setOpen}: {
   useEffect(() => {
     if (selectedCompany) {
       fetchModules(selectedCompany.id);
-      console.log(modules)
     }
   }, [selectedCompany, fetchModules]);
 
@@ -82,6 +81,7 @@ export default function CreatePermisssionForm({setOpen}: {
       name: values.name,
       company: parseInt(values.company),
       module: parseInt(values.module),
+      label: values.label
     }
     createPermission.mutate(formattedValues);
   }
