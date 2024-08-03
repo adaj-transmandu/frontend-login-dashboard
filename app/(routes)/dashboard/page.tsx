@@ -1,6 +1,7 @@
 'use client';
 
 import { ContentLayout } from '@/components/layout/ContentLayout';
+import DashboardTabs from '@/components/misc/DashboardTabs';
 import DashboardNotifications from '@/components/misc/DashboradNotifications';
 import WelcomePage from '@/components/misc/WelcomePage';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,13 +18,13 @@ const DashboardPage =  () => {
 
     return (
     <ContentLayout title='Dashboard'>
-      {
+      {/* {
         loading && <div>Cargando...</div>
       }
       {
         user && <h1 className='text-2xl font-medium'>Bienvenido: {user.first_name}</h1>
-      }
-      <DashboardNotifications />
+      } */}
+      <DashboardTabs/>
     </ContentLayout>
   )
 }
