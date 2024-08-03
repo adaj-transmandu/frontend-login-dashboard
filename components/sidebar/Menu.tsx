@@ -18,11 +18,12 @@ import { cn } from "@/lib/utils";
 
 interface MenuProps {
   isOpen: boolean | undefined;
+  company: 'transmandu' | "hangar74"
 }
 
-export function Menu({ isOpen }: MenuProps) {
+export function Menu({ isOpen, company }: MenuProps) {
   const pathname = usePathname();
-  const menuList = getMenuList(pathname);
+  const menuList = getMenuList(pathname, company);
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">

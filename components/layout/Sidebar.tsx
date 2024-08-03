@@ -11,6 +11,7 @@ import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { SidebarToggle } from "@/components/sidebar/SidebarToggle";
 import Image from "next/image";
 import { useCompanyStore } from "@/stores/CompanyStore";
+import { CompanyMenu } from "@/lib/menu-list";
 
 export function Sidebar() {
   const sidebar = useStore(useSidebarToggle, (state) => state);
@@ -40,7 +41,7 @@ export function Sidebar() {
           </Link>
         </Button>
         {
-          selectedCompany && selectedStation ? <Menu isOpen={sidebar?.isOpen} /> :
+          selectedCompany && selectedStation ? <Menu isOpen={sidebar?.isOpen} company={selectedCompany as CompanyMenu} /> :
 
           <p className="text-sm text-muted-foreground text-center mt-10">Por favor, seleccione una <strong>Empresa</strong> y una <strong>Estacion</strong>.</p>
           
